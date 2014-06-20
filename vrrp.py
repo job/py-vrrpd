@@ -1,4 +1,5 @@
 # $Id: vrrp.py 23 2006-11-08 15:45:33Z dugsong $
+# $Id: vrrp.py 24 2014-06-20 07:47:41Z job $
 
 """Virtual Router Redundancy Protocol."""
 
@@ -12,7 +13,7 @@ class VRRP(dpkt.Packet):
         ('count', 'B', 0),
         ('atype', 'B', 0),
         ('advtime', 'B', 0),
-        ('sum', 'H', 0),
+        ('checksum', 'H', 0),
         )
     addrs = ()
     auth = ''
@@ -49,6 +50,6 @@ class VRRP(dpkt.Packet):
 
     def __str__(self):
         data = ''.join(self.addrs) + self.auth
-        if not self.sum:
-            self.sum = dpkt.in_cksum(self.pack_hdr() + data)
+        if not self.checksum:
+            self.checksum = dpkt.in_cksum(self.pack_hdr() + data)
         return self.pack_hdr() + data

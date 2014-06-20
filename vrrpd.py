@@ -28,9 +28,16 @@ def discover_neighbors (interface, timeout=100):
         ethernet_frame = ethernet.Ethernet(data)
         ip_packet = ethernet_frame.data
         vrrp_packet = ip_packet.vrrp
+        # skip over IPv6 right now, IPv4 needs fixing first
+        if vrrp_packet.version == 3:
+            return
+
         print ""
         print ip_packet.unpack
         print vrrp_packet.unpack
+        print vrrp_packet.checksum
+        vrrp_packet.checksum = 0
+        print dpkt.in_cksum(vrrp_packet.pack_hdr() + vrrp_packet.addrs[0])
         version = vrrp_packet.version
         for i in vrrp_packet.addrs:
             print socket.inet_ntop(ip_version_map[version], i)
